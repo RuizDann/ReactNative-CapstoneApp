@@ -153,13 +153,6 @@ export default function HomeScreen({ route, navigation, props }) {
                     saveData();
                   }}
                 />
-                {/* button to console log date */}
-                <Button
-                  style={styles.button}
-                  color="white"
-                  title="Show Date"
-                  onPress={() => { console.log(formattedDate) }}
-                />
               </View>
             </View>
           </View>
