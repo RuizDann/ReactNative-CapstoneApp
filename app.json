@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "reactnative-inputs",
-    "slug": "reactnative-inputs",
+    "slug": "reactnative-capstoneapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,16 +18,24 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ruizdann.reactnativecapstoneapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.ruizdann.reactnativecapstoneapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "563fdb75-9b84-4b63-abb3-379131728fcc"
+      }
+    },
+    "owner": "ruizdann"
   }
 }
