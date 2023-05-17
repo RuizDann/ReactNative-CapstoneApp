@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Button, ScrollView, TextInput, FlatList, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Button, TextInput, FlatList, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import Svg, { Circle, Rect, AreaChart, Grid, Line, PolyLine } from 'react-native-svg';
+import Svg, { Circle, Rect, Line } from 'react-native-svg';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Checkbox from 'expo-checkbox';
 
+
 export default function EventPage({ route, navigation, props }) {
 
+    
+  
     const [periodH, setPeriodH] = React.useState('1');
     const [otH, setOtH] = React.useState(false);
     const [currentPos, setCurrentPos] = React.useState([]);
@@ -54,24 +59,24 @@ export default function EventPage({ route, navigation, props }) {
       {label: "Caution 1", value: "Caution 1"}
       
     ]);
+
     const [currentRes, setCurrentRes] = React.useState([
       {label: "Success", value: "Success"},
       {label: "Fail", value: "Fail"}
     ]);
+
     const [scoreType, setScoreType] = React.useState([
       {label: "F", value: "F"},
       {label: "A", value: "A"}
     ]);
 
-    const [selectedPos, setSelectedPos] = React.useState("");
-    const [selectedOfAction, setSelectedOfAction] = React.useState("");
+    const minuteValues = [
+      { label: '0', value: '0' },
+      { label: '1', value: '1' },
+      { label: '2', value: '2' },
+      { label: '3', value: '3' },
+    ];
   
-
-    const [finalTime, setFinalTime] = React.useState(0);
-    function handleStopwatchStop(timeElapsed) {
-      setFinalTime(timeElapsed);
-    }
-
     //number inputs
     const [period, setPeriod] = React.useState(1);
     const [ridingTime, setRidingTime] = React.useState(0);
@@ -96,7 +101,7 @@ export default function EventPage({ route, navigation, props }) {
     const [openMinutes, setOpenMinutes] = useState(false);
     const [minuteValue, setMinuteValue] = useState(null);
 
-
+    const [textInputValue, setTextInputValue] = useState("");
 
     const handlePosition = (value) => {
       setPositionType(value);
@@ -114,21 +119,8 @@ export default function EventPage({ route, navigation, props }) {
       }
     };
 
-    const [minute, setMinute] = useState(null);
-    const [textInputValue, setTextInputValue] = useState("");
-  
-    const minuteValues = [
-      { label: '0', value: '0' },
-      { label: '1', value: '1' },
-      { label: '2', value: '2' },
-      { label: '3', value: '3' },
-    ];
-  
-    const handleMinuteChange = (minute) => {
-      setMinute(minute);
-      if (minute === '3') {
-        setTextInputValue('00');
-      } else {
+    const handleMinuteChange = (min) => {
+      if (min === '3') {
         setTextInputValue('');
       }
     };
@@ -142,6 +134,8 @@ export default function EventPage({ route, navigation, props }) {
         setTextInputValue(value);
       }
     };
+
+
 
   //Setup Header
   React.useLayoutEffect(() => {
@@ -176,7 +170,7 @@ export default function EventPage({ route, navigation, props }) {
                   setValue={setMinuteValue}
                   placeholder = "Min"
                   containerStyle={{ height: 40, width: 80,}}
-                  onChangeItem={(item) => handleMinuteChange(item.value)}
+                  onChangeValue={(value) => handleMinuteChange(value)}
                 />
                 </View>
                 <Text style={{ color: 'white' }}> :</Text>
@@ -193,14 +187,14 @@ export default function EventPage({ route, navigation, props }) {
                   />
                 )}
                 {minuteValue === '3' && (
+                  
                   <TextInput
                     style={{ backgroundColor: 'white', fontColor: 'black', width: '50%', height: 50, margin: 5, alignItems: "center", justifyContent: "center" }}
                     textAlign="center"
                     editable={false}
                     placeholder = "00"
                     placeholderTextColor = 'black'
-                    textInputValue = "00"
-                    value={textInputValue}
+                    value={'00'}
                   />
                 ) }
               </View>
@@ -275,28 +269,28 @@ export default function EventPage({ route, navigation, props }) {
 
 //lock orientation to landscape
   ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-//events list section
+//events list section states
 const [events, changeEvents]  = React.useState([]);
 const [totalEvents, changeTotalEvents] = React.useState(route.params.allEvents);
-
 const [listState, setListState] = React.useState(events);
 const [idx, incr] = React.useState(0);
-
+//dropdown states
 const [positionType, setPositionType] = React.useState('');
 const [offensiveAction, setOffensiveAction] = React.useState('');
 const [actionType, setActionType] = React.useState('');
 const [resultType, setResultType] = React.useState('');
 const [currScoreType, setCurrScoreType] = React.useState('');
 const [currPoints, setCurrPoints] = React.useState();
-
+//circle states
 const [circlePositions, setCirclePositions] = React.useState([]);
 const [localCircles, setLocalCircles] = React.useState(circlePositions);
 const [circleColor, setCircleColor] = React.useState('red');
 
+
+
 const addElement = () => { //adds element to list
   if(((offensiveAction != null && actionType != null && resultType != null && currScoreType != null && positionType != null) || offensiveAction == "Fall") && localCircles.length%2 == 0 && localCircles.length/2 == events.length+1)//if input is not null
   {
-
   //create new array with new element
   var newArray = [...events , {
     id : idx,
@@ -305,10 +299,10 @@ const addElement = () => { //adds element to list
     actType: actionType, 
     result: resultType, 
     scoring: currScoreType,  
-    time: finalTime, 
+    time: minuteValue != 3 ? (parseInt(minuteValue*60)) + parseInt(textInputValue): parseInt(minuteValue*60), 
     numPeriod: period, 
     secRidingTime: ridingTime,
-    isOvertime: overtime,
+    isOvertime: overtime ? 1 : 0,
     points: currPoints,
     StartX: localCircles[localCircles.length-2].x,
     StartY: localCircles[localCircles.length-2].y,
@@ -316,27 +310,9 @@ const addElement = () => { //adds element to list
     EndY: localCircles[localCircles.length-1].y
       }];
 
-
   incr(idx+1); //iterates new id value of each event in list (starts as 0)
-  console.log();
-  console.log("finalTime:" + finalTime);
-  console.log("positionType: " + positionType);
-  console.log("ridingTime: " + ridingTime);
-  console.log("period: " + period);
-  console.log("overtime: "+ overtime);
-  console.log("offensiveAction: " + offensiveAction);
-  console.log("actionType: " + actionType);
-  console.log("resultType: " + resultType);
-  console.log("currScoreType: " + currScoreType);
-  console.log("points: " + currPoints);
-  console.log("StartX: " + localCircles[localCircles.length-2].x);
-  console.log("StartY: " + localCircles[localCircles.length-2].y);
-  console.log("EndX: " + localCircles[localCircles.length-1].x);
-  console.log("EndY: " + localCircles[localCircles.length-1].y);
-
   setListState(newArray); //updating states
   changeEvents(newArray);
-
   }
 };
 
@@ -355,6 +331,7 @@ const deleteElement = () => {  //delete element
     setCirclePositions(newCircles);
   }
 };
+
 
 const deleteLastCircle = () => {
     if(localCircles.length%2 !=0 || localCircles.length/2 == events.length+1){
@@ -402,9 +379,14 @@ const deleteLastCircle = () => {
     navigation.navigate('MatchDataHomeScreen', { allEvents:newArray, matchDetails:route.params.matchDetails, allWrestlerInfo:route.params.allWrestlerInfo});
   };
 
+ 
   return (
+
+    // <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
     <View style={styles.backgrounMainSection}>
+  
       <View style={styles.eventsSection}> 
+      
           <FlatList 
             data={listState}
             renderItem={item => (
@@ -413,9 +395,11 @@ const deleteLastCircle = () => {
               </View>
             )}
             keyExtractor={item => item.id}
+            
             />
       </View>
 
+      
       <View style={styles.eventInput}>
         <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', zIndex:1}}>
 
@@ -451,9 +435,9 @@ const deleteLastCircle = () => {
                     break;
                   case "Fall":
                     setCurrPoints(0);
-                    setValueAct(null);
+                    setValueAct("");
                     setValueRes("Success");
-                    setValueScore(null);
+                    setValueScore("");
                     break;
                   case "Caution W":
                     setCurrPoints(0);
@@ -515,6 +499,7 @@ const deleteLastCircle = () => {
 
         </View>
 
+
           <View style={{paddingVertical: 40, alignItems: 'center', flexDirection:'row'}}>
 
             <View style={{width: "50%", alignItems: 'center'}}>
@@ -537,6 +522,8 @@ const deleteLastCircle = () => {
             </View>
       </View>
     
+
+      
       <View style={styles.chartSection}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Svg width="200" height="200"  onPress={handlePress}>
@@ -558,6 +545,7 @@ const deleteLastCircle = () => {
       </View>
 
     </View>
+
   );
 }
 
@@ -649,6 +637,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 3,
     backgroundColor: '#2d3142',
     borderRightColor:'#4F5D75',
+    
   },
   timeInput: {
     width: '25%',
@@ -676,6 +665,7 @@ const styles = StyleSheet.create({
     height: '90%',
     backgroundColor: '#2d3142',
     borderRightColor:'#4F5D75',
+    
   },
   item: {
     flex: 1,
@@ -690,6 +680,8 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     width: 150,
     height: 40,
+
+   
   },
   lastEventBorder: {
     borderRadius: 1,

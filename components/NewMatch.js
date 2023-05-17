@@ -1,45 +1,53 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Button, TextInput, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Button, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Checkbox from 'expo-checkbox';
-import DropDownPicker from 'react-native-dropdown-picker';
+import * as ScreenOrientation from 'expo-screen-orientation';
+import DropDownPicker from'react-native-dropdown-picker';
+
+
 
 export default function NewMatch( { navigation, route }, props ) {
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+
+    const [weight, setWeight] = useState([
+        { label: '125', value: '125' },
+        { label: '133', value: '133' },
+        { label: '141', value: '141' },
+        { label: '149', value: '149' },
+        { label: '157', value: '157' },
+        { label: '165', value: '165' },
+        { label: '174', value: '174' },
+        { label: '184', value: '184' },
+        { label: '197', value: '197' },
+        { label: 'HWT', value: 'HWT' },
+      ]);
+
+      const [matchType, setMatchType] = useState([
+        { label: 'Varsity', value: 'Varsity' },
+        { label: 'JV', value: 'JV' },
+        ]);
+
 
     const [totalWrestlerInfo, changeTotalWrestlerInfo] = React.useState(route.params.allWrestlerInfo);
     const [firstH, setFirstH] = useState('');
     const [lastH, setLastH] = useState('');
     const [teamH, setTeamH] = useState('');
-    const [natQualH, setNatQualH] = useState(false);
     const [allAmerH, setAllAmerH] = useState(false);
+    const [natQualH, setNatQualH] = useState(false);
+
     const [firstA, setFirstA] = useState('');
     const [lastA, setLastA] = useState('');
     const [teamA, setTeamA] = useState('');
     const [natQualA, setNatQualA] = useState(false);
     const [allAmerA, setAllAmerA] = useState(false);
-    const [matchType, setMatchType] = useState([
-    { label: 'Varsity', value: 'Varsity' },
-    { label: 'JV', value: 'JV' },
-    ]);
 
-    const [weight, setWeight] = useState([
-    { label: '125', value: '125' },
-    { label: '133', value: '133' },
-    { label: '141', value: '141' },
-    { label: '149', value: '149' },
-    { label: '157', value: '157' },
-    { label: '165', value: '165' },
-    { label: '174', value: '174' },
-    { label: '184', value: '184' },
-    { label: '197', value: '197' },
-    { label: 'HWT', value: 'HWT' },
-  ]);
     const [openWeight, setOpenWeight] = useState(false);
     const [weightValue, setWeightValue] = useState(null);
 
     const [openMatchType, setOpenMatchType] = useState(false);
     const [matchTypeValue, setMatchTypeValue] = useState(null);
-
-    console.log(route.params.matchDetails);
 
     const saveData = () => {
 
@@ -74,15 +82,31 @@ export default function NewMatch( { navigation, route }, props ) {
         setTeamA(null);
         setAllAmerA(false);
         setNatQualA(false);
-
-        // reset weight and match type dropdowns
         setOpenWeight(false);
         setWeightValue(null);
         setOpenMatchType(false);
         setMatchTypeValue(null);
-
         navigation.navigate('EventPage', { allEvents:route.params.allEvents, matchDetails:route.params.matchDetails, allWrestlerInfo: newArray, paramLastH: lastH, paramLastA: lastA, })
       }
+      React.useLayoutEffect(() => {
+        navigation.setOptions({
+          header: () =>
+          (
+            <View>
+            <SafeAreaView style={styles.matchInfo}>
+              <View style={{marginTop: 5, alignItems: 'center', borderRadius: 1}}>
+               <Text style={{color:'white', alignItems: 'center', fontSize: 18, fontWeight: 'bold'}}>Wrestler Information</Text>
+              </View>
+            </SafeAreaView>
+            </View>
+          )
+        })
+        }
+    );
+
+
+
+
     return (
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.container} keyboardShouldPersistTaps='handled'>
@@ -96,6 +120,7 @@ export default function NewMatch( { navigation, route }, props ) {
                 value={firstH}
                 onChangeText={(firstH) => setFirstH(firstH)}
                 borderColor = 'white'
+                
             />
             <TextInput 
                 style={styles.input}
@@ -115,11 +140,9 @@ export default function NewMatch( { navigation, route }, props ) {
                 value={teamH}
                 onChangeText={(teamH) => setTeamH(teamH)}
             />
-            
             <View style={styles.checkInput}>
             <Text  style={{color:'white'}}>NAT QUAL</Text>
-            {/* checkbox that passes the value as 1 or 0 */}
-            <Checkbox style={{marginLeft: 25}} value={natQualH} onValueChange={setNatQualH}/>
+            <Checkbox style={{marginLeft: 25}} value={natQualH} onValueChange={setNatQualH}/> 
             </View>
             <View style={styles.checkInput}>
             <Text style={{color:'white'}}>All American</Text>
@@ -136,6 +159,7 @@ export default function NewMatch( { navigation, route }, props ) {
                 value={firstA}
                 onChangeText={(firstA) => setFirstA(firstA)}
                 borderColor = 'white'
+               
             />
             <TextInput 
                 style={styles.input}
@@ -155,6 +179,7 @@ export default function NewMatch( { navigation, route }, props ) {
                 value={teamA}
                 onChangeText={(teamA) => setTeamA(teamA)}
             />
+            
             <View style={styles.checkInput}>
                 <Text style={{color:'white'}}>NAT QUAL</Text>
                 <Checkbox style={{marginLeft: 25}} value={natQualA} onValueChange={setNatQualA}/> 
@@ -164,7 +189,8 @@ export default function NewMatch( { navigation, route }, props ) {
                 <Checkbox style={{marginLeft: 25}} value={allAmerA} onValueChange={setAllAmerA}/>
             </View>
             
-          </View>
+          
+</View>
           <View style={styles.mainSection}>
             <View style={styles.dropdownSection}>
               <DropDownPicker
@@ -181,8 +207,8 @@ export default function NewMatch( { navigation, route }, props ) {
                 placeholder="Match Type"
               />
             </View>
-            {/* dropdown for weight class */}
-            <View style={styles.dropdownSection}>
+            
+          <View style={styles.dropdownSection}>
               <DropDownPicker
                 style={{ borderRadius: 0 }}
                 dropDownContainerStyle={{ backgroundColor: 'darkgrey' }}
@@ -197,14 +223,18 @@ export default function NewMatch( { navigation, route }, props ) {
                 placeholder="Select Weight Class"
               />
             </View>
-            
-          </View><View style={styles.buttonBorder}>
-              <Button color="black" title="Submit" onPress={() => {saveData()}}/>
+          
+         
+          </View>
+          <View style={styles.buttonBorder}>
+          <Button color="black" title="Submit" onPress={() => {saveData()}}/>
             </View>
+            
         </View>
-      </TouchableWithoutFeedback>
-    )
-  }
+        </TouchableWithoutFeedback>
+        
+        )
+      }
     
       const styles = StyleSheet.create({
         container: {
@@ -241,7 +271,7 @@ export default function NewMatch( { navigation, route }, props ) {
             color: 'white',
           },
           dropdownSection: {
-            width: '20%',
+            width: '30%',
             height: 40,
             margin: 12,
             zIndex: 1,
@@ -258,14 +288,21 @@ export default function NewMatch( { navigation, route }, props ) {
             color: 'white',
             borderColor: 'white'
         },
-         buttonBorder: {
+        buttonBorder: {
         borderRadius: 2,
         backgroundColor: "white",
         borderWidth: 1,
         borderColor: "black",
-        width: '10%',
+        width: '30%',
         height: 40,
         margin: 20,
         zIndex: -1,
+      },
+      matchInfo: {
+        backgroundColor: '#4F5D75',
+        height: 90,
+        borderRightWidth: 3,
+        alignItems: 'center',
+        borderColor: '#4F5D75',
       },
       });
