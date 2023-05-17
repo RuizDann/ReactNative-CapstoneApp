@@ -17,6 +17,7 @@
     "expo-checkbox": "~2.2.2",
     "expo-screen-orientation": "~5.0.1",
     "expo-sharing": "~11.0.1",
+    "expo-splash-screen": "~0.17.5",
     "expo-status-bar": "~1.4.2",
     "export-to-csv": "^0.2.1",
     "moment": "^2.29.4",
@@ -25,6 +26,7 @@
     "react-dom": "18.1.0",
     "react-json-to-csv": "^1.2.0",
     "react-native": "0.70.8",
+    "react-native-date-picker": "^4.2.13",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-dropdown-select-list": "^2.0.4",
     "react-native-elements": "^3.4.3",
@@ -37,8 +39,7 @@
     "react-native-svg": "13.4.0",
     "react-native-table-component": "^1.2.2",
     "react-native-web": "~0.18.9",
-    "react-time-picker": "^6.0.4",
-    "expo-splash-screen": "~0.17.5"
+    "react-time-picker": "^6.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import RNDateTimePicker from '@react-native-community/datetimepicker';
+import DatePicker from 'react-native-date-picker';
 
 export default function HomeScreen({ route, navigation, props }) {
 
@@ -18,49 +18,8 @@ export default function HomeScreen({ route, navigation, props }) {
   const [openEvent, setOpenEvent] = useState(false);
   const [eventTypeValue, setEventTypeValue] = useState(null);
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [showPicker, setShowPicker] = useState(false);
-  const [formattedDate, setFormattedDate] = useState();
-
-  const handleDateChange = (event, date) => {
-    // if day or month are singular add a 0 in front of it
-    if (date != undefined) {
-      var day = date.getDate();
-      var month = date.getMonth() + 1;
-      var year = date.getFullYear();
-      if (day < 10) {
-        day = '0' + day;
-      }
-      if (month < 10) {
-        month = '0' + month;
-      }
-      setSelectedDate(date);
-      // setFormattedDate(`${month}/${day}/${year}`);
-      setFormattedDate(`${year}/${month}/${day}`);
-    }
-    else if (date == undefined) {
-      
-      // set to current date
-      const currentDate = new Date();
-      var day = currentDate.getDate();
-      var month = currentDate.getMonth() + 1;
-      var year = currentDate.getFullYear();
-      if (day < 10) {
-        day = '0' + day;
-      }
-      if (month < 10) {
-        month = '0' + month;
-      }
-      setSelectedDate(currentDate);
-      // setFormattedDate(`${month}/${day}/${year}`);
-      setFormattedDate(`${year}/${month}/${day}`);
-    }
-    setShowPicker(false);
-  };
-
-  const showDateTimePicker = () => {
-    setShowPicker(true);
-  };
+  const [date, setDate] = useState(new Date());
+  const [open, setOpen] = useState(false);
 
   const saveData = () => {
     if (formattedDate == undefined) {
@@ -133,15 +92,23 @@ export default function HomeScreen({ route, navigation, props }) {
               }}>
               Enter Date of Event:
             </Text>
-            <View style={{alignItems: 'center', justifyContent: 'center', backgroundColor:'white', marginBottom: 20, width:165 }}>
-              <RNDateTimePicker
-                textColor="white"
-                style={styles.dateInput}
-                value={selectedDate}
-                onChange={(event, date) => handleDateChange(event, date)}
+            <View>
+              <Button title="Open" onPress={() => setOpen(true)} />
+              <DatePicker
+                style={{ width: 200 }}
+                date={date}
                 mode="date"
-                format="MM/dd/yyyy"
+                placeholder="select date"
+                format="YYYY/MM/DD"
+                minDate="2020/01/01"
+                maxDate="2025/12/31"
+                confirmBtnText="Confirm"
+                cancelBtnText="Cancel"
+                customStyles={{ dateIcon: { position: 'absolute', left: 0, top: 4, marginLeft: 0 } }}
+                onDateChange={(date) => { setDate(date); }}
               />
+
+              
             </View>
             <View style={styles.buttonSection}>
               <View style={styles.buttonBorder}>
